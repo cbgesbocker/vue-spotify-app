@@ -1,32 +1,87 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app
+    id="app"
+  >
+    <v-card
+      color="grey lighten-4"
+      flat
+      tile
+    >
+      <v-toolbar>
+        <v-toolbar-title>Vue Music App</v-toolbar-title>
+
+        <v-spacer />
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn icon>
+              <v-icon v-on="on">
+                mdi-heart
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>Like</span>
+        </v-tooltip>
+
+        <template v-if="$store.state.auth.userSignedIn">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn icon>
+                <v-icon v-on="on">
+                  mdi-logout
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Login</span>
+          </v-tooltip>
+        </template>
+        <template v-else>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                icon
+                :href="spotifyClient.getAuthorizationUrl()"
+              >
+                <v-icon
+                  v-on="on"
+                >
+                  mdi-login
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Login</span>
+          </v-tooltip>
+        </template>
+      </v-toolbar>
+    </v-card>
+    <router-view />
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+
+<script lang="ts">
+
+import Vue from 'vue';
+import { Component } from 'vue-property-decorator';
+
+import getSpotifyClient from '@/services/SpotifyClient';
+
+@Component
+export default class App extends Vue {
+  spotifyClient = getSpotifyClient();
+
+  navItems = [
+    {
+      to: '/',
+      text: 'Home',
+    },
+  ]
 }
 
-#nav {
-  padding: 30px;
+</script>
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+<style lang="scss">
+body {
+  font-family: 'Roboto';
 }
 </style>

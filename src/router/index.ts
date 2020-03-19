@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
+import store from '@/store';
 
 Vue.use(VueRouter);
 
@@ -8,15 +8,21 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import('../views/Home.vue'),
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../views/Admin.vue'),
+    beforeEnter: (to: any, from: any, next: () => void) => {
+      const { hash } = to;
+      const split = hash.split('=');
+      const hasToken = split[1] !== undefined;
+      if (hash && hasToken) {
+        store.commit('SET_AUTH_KEY', split[1]);
+        next();
+      }
+    },
   },
 ];
 
